@@ -19,6 +19,8 @@ import {
   RotateCcw,
   Sparkles,
   Smartphone,
+  Monitor,
+  Camera,
   Sliders,
   Image as ImageIcon,
   MessageCircle,
@@ -347,29 +349,80 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         {/* TAB 1: DEVICE & STATUS BAR SETTINGS */}
         {activeTab === 'device' && (
           <div className="space-y-4">
-            {/* Chassis Style */}
+            {/* View Format Options (2 options only) */}
             <div className="space-y-1.5">
-              <label className="font-semibold text-neutral-300">Device Mockup Frame</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'iphone16', label: 'iPhone 16 Pro' },
-                  { id: 'android', label: 'Android Phone' },
-                  { id: 'borderless', label: 'Borderless / Raw' },
-                ].map((frame) => (
-                  <button
-                    key={frame.id}
-                    onClick={() => updateDevice('frameStyle', frame.id)}
-                    className={`py-2 px-2 rounded-lg border text-center transition-colors ${
-                      state.deviceSettings.frameStyle === frame.id
-                        ? 'border-blue-500 bg-blue-500/10 text-white font-bold'
-                        : 'border-neutral-700 bg-neutral-800/60 text-neutral-300 hover:border-neutral-600'
-                    }`}
-                  >
-                    {frame.label}
-                  </button>
-                ))}
+              <label className="font-semibold text-neutral-300">View Format</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => updateDevice('viewFormat', 'iphone')}
+                  className={`py-2 px-3 rounded-lg border flex items-center justify-center space-x-2 transition-colors ${
+                    (state.deviceSettings.viewFormat || 'iphone') === 'iphone'
+                      ? 'border-blue-500 bg-blue-500/15 text-white font-bold'
+                      : 'border-neutral-700 bg-neutral-800/60 text-neutral-400 hover:border-neutral-600 hover:text-white'
+                  }`}
+                >
+                  <Smartphone className="w-4 h-4" />
+                  <span>iPhone (Portrait)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => updateDevice('viewFormat', 'desktop')}
+                  className={`py-2 px-3 rounded-lg border flex items-center justify-center space-x-2 transition-colors ${
+                    state.deviceSettings.viewFormat === 'desktop'
+                      ? 'border-blue-500 bg-blue-500/15 text-white font-bold'
+                      : 'border-neutral-700 bg-neutral-800/60 text-neutral-400 hover:border-neutral-600 hover:text-white'
+                  }`}
+                >
+                  <Monitor className="w-4 h-4" />
+                  <span>Desktop (Landscape)</span>
+                </button>
               </div>
             </div>
+
+            {/* Device Option: ONLY for phone! */}
+            {(state.deviceSettings.viewFormat || 'iphone') === 'iphone' && (
+              <div className="space-y-1.5 p-2.5 rounded-xl bg-neutral-800/40 border border-neutral-700/50">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-neutral-300">Device Frame</label>
+                  <span className="text-[10px] text-neutral-500 font-medium">Phone Only</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateDevice('phoneFrame', 'none');
+                      updateDevice('frameStyle', 'borderless');
+                    }}
+                    className={`py-2 px-2.5 rounded-lg border flex items-center justify-center space-x-2 transition-colors ${
+                      (state.deviceSettings.phoneFrame || 'none') === 'none'
+                        ? 'border-purple-500 bg-purple-500/15 text-white font-bold shadow-xs'
+                        : 'border-neutral-700 bg-neutral-800/60 text-neutral-300 hover:border-neutral-600 hover:text-white'
+                    }`}
+                  >
+                    <Camera className="w-3.5 h-3.5 text-purple-400" />
+                    <span>No Device (Screenshot)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateDevice('phoneFrame', 'iphone16');
+                      updateDevice('frameStyle', 'iphone16');
+                    }}
+                    className={`py-2 px-2.5 rounded-lg border flex items-center justify-center space-x-2 transition-colors ${
+                      state.deviceSettings.phoneFrame === 'iphone16'
+                        ? 'border-blue-500 bg-blue-500/15 text-white font-bold shadow-xs'
+                        : 'border-neutral-700 bg-neutral-800/60 text-neutral-300 hover:border-neutral-600 hover:text-white'
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5 text-blue-400" />
+                    <span>iPhone Frame</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Time & Battery */}
             <div className="grid grid-cols-2 gap-3">

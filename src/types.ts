@@ -25,7 +25,12 @@ export type VerifiedBadge = 'none' | 'blue' | 'gold' | 'gray';
 
 export type CanvasBackdrop = 'mesh' | 'dark' | 'light' | 'transparent';
 
+export type ViewFormat = 'iphone' | 'desktop'; // iPhone (portrait) vs Desktop (landscape)
+export type PhoneFrameStyle = 'none' | 'iphone16'; // 'none' (No Device / Screenshot - default) vs 'iphone16' (iPhone Frame)
+
 export interface DeviceSettings {
+  viewFormat: ViewFormat;
+  phoneFrame: PhoneFrameStyle;
   osType: 'ios' | 'android';
   time: string;
   batteryLevel: number;
@@ -34,7 +39,7 @@ export interface DeviceSettings {
   wifi: boolean;
   networkType: '5G' | 'LTE' | '4G' | 'WiFi';
   theme: 'light' | 'dark';
-  frameStyle: 'iphone16' | 'android' | 'borderless';
+  frameStyle?: 'iphone16' | 'android' | 'borderless' | 'none';
   showStatusBar: boolean;
   showHomeIndicator: boolean;
   showDynamicIsland: boolean;

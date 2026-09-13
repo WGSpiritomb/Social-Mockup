@@ -3,6 +3,8 @@ import { AppState } from '../types';
 export const initialAppState: AppState = {
   activePlatform: 'twitter',
   deviceSettings: {
+    viewFormat: 'iphone',
+    phoneFrame: 'none',
     osType: 'ios',
     time: '9:41',
     batteryLevel: 94,
@@ -11,7 +13,7 @@ export const initialAppState: AppState = {
     wifi: true,
     networkType: '5G',
     theme: 'dark',
-    frameStyle: 'iphone16',
+    frameStyle: 'borderless',
     showStatusBar: true,
     showHomeIndicator: true,
     showDynamicIsland: true,

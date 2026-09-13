@@ -16,12 +16,13 @@ import { FaceTimeMockup } from './components/platforms/FaceTimeMockup';
 import { SnapchatMockup } from './components/platforms/SnapchatMockup';
 import { XVideosMockup } from './components/platforms/XVideosMockup';
 import { PlatformDropdown } from './components/common/PlatformDropdown';
-import { toPng, toBlob } from 'html-to-image';
+import { captureScreenshotPng, captureScreenshotBlob } from './utils/exportHelper';
 import {
   ZoomIn,
   ZoomOut,
   Sparkles,
   Smartphone,
+  Monitor,
   Check,
   Download,
   Copy,
@@ -30,6 +31,7 @@ import {
   Sun,
   Moon,
   Layers,
+  Maximize2,
 } from 'lucide-react';
 
 const platformGlows: Record<SocialPlatform, { primary: string; secondary: string }> = {
@@ -66,27 +68,18 @@ export default function App() {
     }));
   };
 
-  // Export high-res PNG
+  // Export high-res PNG (Bulletproof for GitHub Pages & local)
   const handleExportPng = useCallback(async () => {
     if (!frameCaptureRef.current) return;
     setIsExporting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 80));
 
-      const dataUrl = await toPng(frameCaptureRef.current, {
-        cacheBust: true,
-        pixelRatio: 2, // Retina 2x resolution
-        filter: (node) => {
-          if (node instanceof HTMLElement && node.dataset.noExport) {
-            return false;
-          }
-          return true;
-        },
-      });
+      const dataUrl = await captureScreenshotPng(frameCaptureRef.current);
 
       const link = document.createElement('a');
-      link.download = `mockup-${state.activePlatform}-${Date.now()}.png`;
+      link.download = `mockup-${state.activePlatform}-${state.deviceSettings.viewFormat}-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -95,17 +88,14 @@ export default function App() {
     } finally {
       setIsExporting(false);
     }
-  }, [state.activePlatform]);
+  }, [state.activePlatform, state.deviceSettings.viewFormat]);
 
   // Copy PNG image to clipboard
   const handleCopyToClipboard = useCallback(async () => {
     if (!frameCaptureRef.current) return;
 
     try {
-      const blob = await toBlob(frameCaptureRef.current, {
-        pixelRatio: 2,
-        cacheBust: true,
-      });
+      const blob = await captureScreenshotBlob(frameCaptureRef.current);
 
       if (blob && navigator.clipboard && (window as any).ClipboardItem) {
         await navigator.clipboard.write([
@@ -114,7 +104,7 @@ export default function App() {
         setCopied(true);
         setTimeout(() => setCopied(false), 2500);
       } else {
-        const dataUrl = await toPng(frameCaptureRef.current, { pixelRatio: 1.5 });
+        const dataUrl = await captureScreenshotPng(frameCaptureRef.current);
         await navigator.clipboard.writeText(dataUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2500);
@@ -274,38 +264,105 @@ export default function App() {
         >
           {/* Enhanced Viewport & Quick Controls Toolbar */}
           <div className="relative z-10 px-4 py-2.5 border-b border-neutral-800/80 bg-neutral-900/70 backdrop-blur-md flex flex-wrap items-center justify-between gap-2 select-none">
-            {/* Left: Device Frame Style Selector */}
-            <div className="flex items-center space-x-1.5">
-              <span className="text-[11px] font-semibold text-neutral-400 hidden xl:inline">
-                Device Frame:
-              </span>
-              <div className="flex items-center bg-neutral-800/80 p-0.5 rounded-xl border border-neutral-700/60 text-xs">
-                {(
-                  [
-                    { id: 'iphone16', label: 'iPhone 16 Pro', icon: '📱' },
-                    { id: 'borderless', label: 'Borderless', icon: '⚡' },
-                    { id: 'android', label: 'Android', icon: '🤖' },
-                  ] as const
-                ).map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() =>
-                      setState((prev) => ({
-                        ...prev,
-                        deviceSettings: { ...prev.deviceSettings, frameStyle: f.id },
-                      }))
-                    }
-                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
-                      state.deviceSettings.frameStyle === f.id
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
-                    }`}
-                  >
-                    <span>{f.icon}</span>
-                    <span className="hidden sm:inline">{f.label}</span>
-                  </button>
-                ))}
+            {/* Left: View Format Selector - 2 OPTIONS ONLY: iPhone (Portrait) and Desktop (Landscape) */}
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center bg-neutral-800/90 p-0.5 rounded-xl border border-neutral-700/70 text-xs">
+                <button
+                  onClick={() =>
+                    setState((prev) => ({
+                      ...prev,
+                      deviceSettings: {
+                        ...prev.deviceSettings,
+                        viewFormat: 'iphone',
+                      },
+                    }))
+                  }
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+                    (state.deviceSettings.viewFormat || 'iphone') === 'iphone'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                  }`}
+                  title="iPhone (Portrait) view"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span>iPhone (Portrait)</span>
+                </button>
+
+                <button
+                  onClick={() =>
+                    setState((prev) => ({
+                      ...prev,
+                      deviceSettings: {
+                        ...prev.deviceSettings,
+                        viewFormat: 'desktop',
+                      },
+                    }))
+                  }
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+                    state.deviceSettings.viewFormat === 'desktop'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                  }`}
+                  title="Desktop (Landscape) view"
+                >
+                  <Monitor className="w-3.5 h-3.5" />
+                  <span>Desktop (Landscape)</span>
+                </button>
               </div>
+
+              {/* Device Option: ONLY for phone! */}
+              {(state.deviceSettings.viewFormat || 'iphone') === 'iphone' && (
+                <div className="flex items-center space-x-1.5 pl-1.5 border-l border-neutral-800">
+                  <span className="text-[11px] font-semibold text-neutral-400 hidden xl:inline">
+                    Device:
+                  </span>
+                  <div className="flex items-center bg-neutral-800/80 p-0.5 rounded-xl border border-neutral-700/60 text-xs">
+                    <button
+                      onClick={() =>
+                        setState((prev) => ({
+                          ...prev,
+                          deviceSettings: {
+                            ...prev.deviceSettings,
+                            phoneFrame: 'none',
+                            frameStyle: 'borderless',
+                          },
+                        }))
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+                        (state.deviceSettings.phoneFrame || 'none') === 'none'
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                      }`}
+                      title="No Device (Clean Screenshot - Default)"
+                    >
+                      <span>📷</span>
+                      <span>No Device (Screenshot)</span>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setState((prev) => ({
+                          ...prev,
+                          deviceSettings: {
+                            ...prev.deviceSettings,
+                            phoneFrame: 'iphone16',
+                            frameStyle: 'iphone16',
+                          },
+                        }))
+                      }
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+                        state.deviceSettings.phoneFrame === 'iphone16'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-neutral-400 hover:text-white hover:bg-neutral-700/50'
+                      }`}
+                      title="iPhone 16 Pro Titanium Frame"
+                    >
+                      <span>📱</span>
+                      <span className="hidden sm:inline">iPhone Frame</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Center: Canvas Studio Backdrop Mode & Quick Screen Toggles */}
