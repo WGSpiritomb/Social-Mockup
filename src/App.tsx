@@ -81,7 +81,9 @@ export default function App() {
       const link = document.createElement('a');
       link.download = `mockup-${state.activePlatform}-${state.deviceSettings.viewFormat}-${Date.now()}.png`;
       link.href = dataUrl;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error('Failed to export screenshot:', err);
       alert('Failed to generate PNG export. Please check console.');

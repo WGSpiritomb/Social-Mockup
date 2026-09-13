@@ -47,6 +47,8 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
                 src={state.avatarUrl}
                 alt={state.displayName}
                 className="w-8 h-8 rounded-full object-cover border border-neutral-700"
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
               />
             </div>
             <div>
@@ -137,6 +139,8 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
                 src={state.avatarUrl}
                 alt={state.displayName}
                 className="w-10 h-10 rounded-full object-cover border border-neutral-700/50"
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
               />
               <div className="flex flex-col">
                 <div className="flex items-center space-x-1">
@@ -165,6 +169,7 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
                 src={state.mediaUrl}
                 alt="Tweet media"
                 className="w-full max-h-72 object-cover"
+                crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -234,6 +239,8 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
                   src={reply.avatarUrl}
                   alt={reply.displayName}
                   className="w-9 h-9 rounded-full object-cover border border-neutral-700/50 shrink-0"
+                  crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-1">

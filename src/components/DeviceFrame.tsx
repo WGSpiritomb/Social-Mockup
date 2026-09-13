@@ -104,7 +104,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
     // 2. IPHONE (PORTRAIT) - HARDWARE FRAME (Titanium Chassis)
     if (isPhoneFrame) {
       return (
-        <div className="relative w-[392px] h-[804px]">
+        <div ref={frameRef} className="relative w-[392px] h-[804px]">
           {/* Side Hardware Buttons */}
           <div className="absolute -left-[14px] top-[115px] w-[3px] h-[26px] bg-[#3a3938] rounded-l-xs shadow-xs" />
           <div className="absolute -left-[14px] top-[155px] w-[3px] h-[50px] bg-[#3a3938] rounded-l-xs shadow-xs" />
@@ -113,7 +113,6 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 
           {/* iPhone Titanium Chassis Outer Border */}
           <div
-            ref={frameRef}
             className="relative w-[392px] h-[804px] bg-[#222120] p-[10px] rounded-[48px] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.9),0_12px_28px_-8px_rgba(0,0,0,0.7),0_0_0_3px_#43413e,0_0_0_1px_rgba(255,255,255,0.1),inset_0_0_4px_rgba(255,255,255,0.2)] flex flex-col"
           >
             {/* Screen Bezel & Display */}
