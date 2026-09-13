@@ -1,0 +1,6 @@
+{
+  "name": "Social Media Mockup & Fake Screenshot Generator",
+  "description": "Pixel-perfect social media mockup and screenshot generator for X, Instagram, TikTok, Facebook, YouTube, OnlyFans, iMessage, FaceTime, Snapchat, and XVideos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
