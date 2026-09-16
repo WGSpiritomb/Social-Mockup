@@ -29,6 +29,7 @@ interface InstagramMockupProps {
 
 export const InstagramMockup: React.FC<InstagramMockupProps> = ({ state, deviceSettings }) => {
   const isDark = deviceSettings.theme === 'dark';
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
   const bgClass = isDark ? 'bg-black text-white' : 'bg-white text-neutral-900';
   const borderClass = isDark ? 'border-neutral-800' : 'border-neutral-200';
   const subtextClass = isDark ? 'text-neutral-400' : 'text-neutral-500';
@@ -246,7 +247,7 @@ export const InstagramMockup: React.FC<InstagramMockupProps> = ({ state, deviceS
 
   // Instagram Feed Post Mode
   return (
-    <div className={`w-full h-full flex flex-col ${bgClass} select-none`}>
+    <div className={`w-full ${isDesktop ? 'h-auto' : 'h-full'} flex flex-col ${bgClass} select-none`}>
       {/* Top App Header */}
       <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass}`}>
         <span className="font-bold text-lg tracking-tight font-serif italic">Instagram</span>
@@ -256,7 +257,7 @@ export const InstagramMockup: React.FC<InstagramMockupProps> = ({ state, deviceS
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar">
+      <div className={`flex-1 ${isDesktop ? 'overflow-visible' : 'overflow-y-auto'} no-scrollbar`}>
         {/* Post Header */}
         <div className="px-3.5 py-2.5 flex items-center justify-between">
           <div className="flex items-center space-x-2.5">

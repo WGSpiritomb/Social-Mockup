@@ -25,6 +25,7 @@ interface FacebookMockupProps {
 
 export const FacebookMockup: React.FC<FacebookMockupProps> = ({ state, deviceSettings }) => {
   const isDark = deviceSettings.theme === 'dark';
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
   const bgClass = isDark ? 'bg-[#18191a] text-[#e4e6eb]' : 'bg-[#f0f2f5] text-[#050505]';
   const cardBgClass = isDark ? 'bg-[#242526] text-[#e4e6eb]' : 'bg-white text-[#050505]';
   const borderClass = isDark ? 'border-[#393a3b]' : 'border-[#ced0d4]';
@@ -128,7 +129,7 @@ export const FacebookMockup: React.FC<FacebookMockupProps> = ({ state, deviceSet
 
   // Newsfeed Post Mode
   return (
-    <div className={`w-full h-full flex flex-col ${bgClass} select-none overflow-y-auto no-scrollbar`}>
+    <div className={`w-full ${isDesktop ? 'h-auto overflow-visible' : 'h-full overflow-y-auto'} flex flex-col ${bgClass} select-none no-scrollbar`}>
       {/* Top Facebook Header */}
       <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass} ${cardBgClass}`}>
         <span className="text-[#1877f2] font-black text-2xl tracking-tighter">facebook</span>

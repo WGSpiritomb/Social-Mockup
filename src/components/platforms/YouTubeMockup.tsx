@@ -26,6 +26,7 @@ interface YouTubeMockupProps {
 
 export const YouTubeMockup: React.FC<YouTubeMockupProps> = ({ state, deviceSettings }) => {
   const isDark = deviceSettings.theme === 'dark';
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
   const bgClass = isDark ? 'bg-[#0f0f0f] text-white' : 'bg-white text-neutral-900';
   const subtextClass = isDark ? 'text-neutral-400' : 'text-neutral-600';
   const pillBgClass = isDark ? 'bg-neutral-800 hover:bg-neutral-700' : 'bg-neutral-100 hover:bg-neutral-200';
@@ -137,7 +138,7 @@ export const YouTubeMockup: React.FC<YouTubeMockupProps> = ({ state, deviceSetti
   // Channel Page Mode
   if (state.mode === 'channel') {
     return (
-      <div className={`w-full h-full flex flex-col ${bgClass} select-none overflow-y-auto no-scrollbar`}>
+      <div className={`w-full ${isDesktop ? 'h-auto overflow-visible' : 'h-full overflow-y-auto'} flex flex-col ${bgClass} select-none no-scrollbar`}>
         <div className="px-4 py-2 flex items-center justify-between">
           <ArrowLeft className="w-5 h-5 cursor-pointer" />
           <span className="font-bold text-sm truncate max-w-[160px]">{state.channelName}</span>
@@ -212,7 +213,7 @@ export const YouTubeMockup: React.FC<YouTubeMockupProps> = ({ state, deviceSetti
 
   // Standard Video Player UI
   return (
-    <div className={`w-full h-full flex flex-col ${bgClass} select-none overflow-y-auto no-scrollbar`}>
+    <div className={`w-full ${isDesktop ? 'h-auto overflow-visible' : 'h-full overflow-y-auto'} flex flex-col ${bgClass} select-none no-scrollbar`}>
       {/* Video Player Inset */}
       <div className="relative w-full aspect-video bg-black shrink-0">
         <img

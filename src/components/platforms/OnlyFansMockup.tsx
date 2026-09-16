@@ -22,6 +22,7 @@ interface OnlyFansMockupProps {
 
 export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSettings }) => {
   const isDark = deviceSettings.theme === 'dark';
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
   const bgClass = isDark ? 'bg-[#121619] text-white' : 'bg-white text-neutral-900';
   const cardBgClass = isDark ? 'bg-[#191f24] text-white' : 'bg-white text-neutral-900';
   const borderClass = isDark ? 'border-neutral-800' : 'border-neutral-200';
@@ -30,7 +31,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
   // DM Chat Mode
   if (state.mode === 'chat') {
     return (
-      <div className={`w-full h-full flex flex-col ${bgClass} select-none`}>
+      <div className={`w-full ${isDesktop ? 'h-auto min-h-[500px]' : 'h-full'} flex flex-col ${bgClass} select-none`}>
         {/* OnlyFans DM Header */}
         <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass}`}>
           <div className="flex items-center space-x-3">
@@ -106,7 +107,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
   const isPaywalled = state.mode === 'locked' || state.isLocked;
 
   return (
-    <div className={`w-full h-full flex flex-col ${bgClass} select-none overflow-y-auto no-scrollbar`}>
+    <div className={`w-full ${isDesktop ? 'h-auto overflow-visible' : 'h-full overflow-y-auto'} flex flex-col ${bgClass} select-none no-scrollbar`}>
       {/* Top Header */}
       <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass} ${cardBgClass}`}>
         <span className="text-[#00aff0] font-black text-xl tracking-tight">OnlyFans</span>

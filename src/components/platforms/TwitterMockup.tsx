@@ -35,9 +35,11 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
     return num.toLocaleString();
   };
 
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
+
   if (state.mode === 'chat') {
     return (
-      <div className={`w-full h-full flex flex-col ${bgClass} select-none`}>
+      <div className={`w-full ${isDesktop ? 'h-auto min-h-[520px]' : 'h-full'} flex flex-col ${bgClass} select-none`}>
         {/* DM Chat Header */}
         <div className={`px-4 py-3 flex items-center justify-between border-b ${borderClass}`}>
           <div className="flex items-center space-x-3">
@@ -121,7 +123,7 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
 
   // Tweet Post Mode
   return (
-    <div className={`w-full h-full flex flex-col ${bgClass} select-none`}>
+    <div className={`w-full ${isDesktop ? 'h-auto' : 'h-full'} flex flex-col ${bgClass} select-none`}>
       {/* Twitter App Header */}
       <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass}`}>
         <ArrowLeft className="w-5 h-5 cursor-pointer" />
@@ -129,7 +131,7 @@ export const TwitterMockup: React.FC<TwitterMockupProps> = ({ state, deviceSetti
         <MoreHorizontal className="w-5 h-5 cursor-pointer" />
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar">
+      <div className={`flex-1 ${isDesktop ? 'overflow-visible' : 'overflow-y-auto'} no-scrollbar`}>
         {/* Main Tweet */}
         <div className={`p-4 border-b ${borderClass}`}>
           {/* Author info */}

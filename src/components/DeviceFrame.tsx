@@ -1,7 +1,6 @@
 import React from 'react';
 import { DeviceSettings, SocialPlatform } from '../types';
 import { StatusBar, HomeIndicator } from './common/StatusBar';
-import { Globe, Lock, ShieldCheck } from 'lucide-react';
 
 interface DeviceFrameProps {
   settings: DeviceSettings;
@@ -9,19 +8,6 @@ interface DeviceFrameProps {
   children: React.ReactNode;
   frameRef?: React.RefObject<HTMLDivElement | null>;
 }
-
-const PLATFORM_URLS: Record<SocialPlatform, string> = {
-  twitter: 'https://x.com/post/status/1834920482',
-  instagram: 'https://www.instagram.com/p/C9xL39z/',
-  tiktok: 'https://www.tiktok.com/@creator/video/728910',
-  facebook: 'https://www.facebook.com/post/847291',
-  youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  onlyfans: 'https://onlyfans.com/feed',
-  imessage: 'Messages — Desktop',
-  facetime: 'FaceTime — Desktop',
-  snapchat: 'https://web.snapchat.com',
-  xvideos: 'https://www.xvideos.com/video9481729',
-};
 
 export const DeviceFrame: React.FC<DeviceFrameProps> = ({
   settings,
@@ -31,6 +17,39 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 }) => {
   const isDesktop = settings.viewFormat === 'desktop';
   const isPhoneFrame = !isDesktop && settings.phoneFrame === 'iphone16';
+
+  // Measure full content height in desktop/landscape so nothing is cut off
+  const [measuredDesktopHeight, setMeasuredDesktopHeight] = React.useState<number>(750);
+  const desktopMeasureRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useLayoutEffect(() => {
+    if (!isDesktop) return;
+
+    const updateHeight = () => {
+      if (desktopMeasureRef.current) {
+        const h = desktopMeasureRef.current.scrollHeight || desktopMeasureRef.current.offsetHeight;
+        if (h > 50) {
+          setMeasuredDesktopHeight(h);
+        }
+      }
+    };
+
+    updateHeight();
+    const raf = requestAnimationFrame(updateHeight);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && desktopMeasureRef.current) {
+      ro = new ResizeObserver(() => {
+        updateHeight();
+      });
+      ro.observe(desktopMeasureRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (ro) ro.disconnect();
+    };
+  }, [isDesktop, activePlatform, children, settings]);
 
   // Determine if status bar should use dark text
   const forceLightStatusBar =
@@ -49,7 +68,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 
   // Frame dimensions mapping
   const currentDims = isDesktop
-    ? { width: 750, height: 540 }
+    ? { width: 700, height: measuredDesktopHeight }
     : isPhoneFrame
     ? { width: 392, height: 804 }
     : { width: 385, height: 780 };
@@ -59,39 +78,17 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
 
   // Render content based on format & frame style
   const renderFrameContent = () => {
-    // 1. DESKTOP (LANDSCAPE) VIEW
+    // 1. DESKTOP (LANDSCAPE) VIEW - Clean, borderless & fits full content
     if (isDesktop) {
       return (
         <div
           ref={frameRef}
-          className="relative w-[750px] h-[540px] overflow-hidden rounded-2xl shadow-[0_30px_70px_-15px_rgba(0,0,0,0.9),0_12px_28px_-8px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.12)] bg-[#101216] border border-neutral-800 flex flex-col"
+          className="relative w-[700px] h-fit rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),0_12px_24px_-8px_rgba(0,0,0,0.6)] bg-black overflow-hidden flex flex-col"
         >
-          {/* Desktop Browser Window Header Bar */}
-          <div className="h-10 px-4 bg-neutral-900/95 border-b border-neutral-800/80 flex items-center justify-between shrink-0 select-none z-30">
-            {/* Window Traffic Dots */}
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 shadow-xs" />
-              <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]/50 shadow-xs" />
-              <div className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]/50 shadow-xs" />
-            </div>
-
-            {/* Browser Address Bar */}
-            <div className="flex-1 max-w-md mx-4">
-              <div className="flex items-center justify-center space-x-1.5 px-3 py-1 rounded-lg bg-neutral-950/70 border border-neutral-800 text-[11px] text-neutral-400 font-mono">
-                <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
-                <span className="truncate">{PLATFORM_URLS[activePlatform] || 'https://web.app'}</span>
-              </div>
-            </div>
-
-            {/* Right Window Status Indicator */}
-            <div className="flex items-center space-x-2 text-neutral-500 text-[11px]">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-              <span className="font-sans font-medium text-[10px] text-neutral-400 uppercase tracking-wider">Web</span>
-            </div>
-          </div>
-
-          {/* Main Desktop Screen Area */}
-          <div className="flex-1 w-full h-full overflow-hidden relative flex flex-col bg-black">
+          <div
+            ref={desktopMeasureRef}
+            className="w-full h-auto flex flex-col relative"
+          >
             {children}
             {settings.showGlassGlare && (
               <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/[0.025] to-transparent z-25" />

@@ -19,9 +19,10 @@ interface XVideosMockupProps {
   deviceSettings: DeviceSettings;
 }
 
-export const XVideosMockup: React.FC<XVideosMockupProps> = ({ state }) => {
+export const XVideosMockup: React.FC<XVideosMockupProps> = ({ state, deviceSettings }) => {
+  const isDesktop = deviceSettings?.viewFormat === 'desktop';
   return (
-    <div className="w-full h-full bg-[#111111] text-neutral-200 flex flex-col overflow-y-auto custom-scrollbar select-none text-xs">
+    <div className={`w-full ${isDesktop ? 'h-auto overflow-visible' : 'h-full overflow-y-auto'} bg-[#111111] text-neutral-200 flex flex-col custom-scrollbar select-none text-xs`}>
       {/* Top XVideos Red & Black Header */}
       <div className="bg-[#1e1e1e] border-b border-neutral-800 px-3 py-2 flex items-center justify-between shrink-0">
         <div className="flex items-center space-x-2">
