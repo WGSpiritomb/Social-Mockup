@@ -5,6 +5,7 @@ import { StatusBar, HomeIndicator } from './common/StatusBar';
 interface DeviceFrameProps {
   settings: DeviceSettings;
   activePlatform: SocialPlatform;
+  forceLightStatusBar?: boolean;
   children: React.ReactNode;
   frameRef?: React.RefObject<HTMLDivElement | null>;
 }
@@ -12,6 +13,7 @@ interface DeviceFrameProps {
 export const DeviceFrame: React.FC<DeviceFrameProps> = ({
   settings,
   activePlatform,
+  forceLightStatusBar = false,
   children,
   frameRef,
 }) => {
@@ -51,15 +53,7 @@ export const DeviceFrame: React.FC<DeviceFrameProps> = ({
     };
   }, [isDesktop, activePlatform, children, settings]);
 
-  // Determine if status bar should use dark text
-  const forceLightStatusBar =
-    activePlatform === 'tiktok' ||
-    activePlatform === 'facetime' ||
-    activePlatform === 'xvideos' ||
-    activePlatform === 'snapchat' ||
-    (activePlatform === 'instagram' && (settings.theme === 'dark' || activePlatform === 'instagram')) ||
-    (activePlatform === 'youtube' && settings.theme === 'dark');
-
+  // Determine status bar text contrast based on dark full-bleed screens or theme
   const statusBarText = forceLightStatusBar
     ? 'light'
     : settings.theme === 'light'

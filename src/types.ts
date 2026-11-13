@@ -1,27 +1,23 @@
 export type SocialPlatform =
-  | 'twitter'
-  | 'instagram'
-  | 'tiktok'
-  | 'facebook'
-  | 'youtube'
+  | 'fanza'
   | 'onlyfans'
-  | 'imessage'
-  | 'facetime'
-  | 'snapchat'
-  | 'xvideos';
+  | 'xvideos'
+  | 'fanbox'
+  | 'fansly'
+  | 'dlsite'
+  | 'fantia'
+  | 'pornhub'
+  | 'blacked';
 
-export type TwitterMode = 'post' | 'chat';
-export type InstagramMode = 'post' | 'chat' | 'live';
-export type TikTokMode = 'feed' | 'live';
-export type FacebookMode = 'post' | 'messenger';
-export type YouTubeMode = 'video' | 'channel' | 'live';
+export type FanzaMode = 'product' | 'stream';
 export type OnlyFansMode = 'post' | 'locked' | 'chat';
-export type IMessageMode = 'single' | 'group';
-export type FaceTimeMode = 'video' | 'audio';
-export type SnapchatMode = 'story' | 'chat';
 export type XVideosMode = 'video';
-
-export type VerifiedBadge = 'none' | 'blue' | 'gold' | 'gray';
+export type FanboxMode = 'post' | 'locked';
+export type FanslyMode = 'post' | 'locked' | 'chat';
+export type DlsiteMode = 'product' | 'viewer';
+export type FantiaMode = 'post' | 'locked';
+export type PornhubMode = 'video';
+export type BlackedMode = 'scene';
 
 export type CanvasBackdrop = 'mesh' | 'dark' | 'light' | 'transparent';
 
@@ -31,7 +27,6 @@ export type PhoneFrameStyle = 'none' | 'iphone16'; // 'none' (No Device / Screen
 export interface DeviceSettings {
   viewFormat: ViewFormat;
   phoneFrame: PhoneFrameStyle;
-  osType: 'ios' | 'android';
   time: string;
   batteryLevel: number;
   isCharging: boolean;
@@ -39,11 +34,10 @@ export interface DeviceSettings {
   wifi: boolean;
   networkType: '5G' | 'LTE' | '4G' | 'WiFi';
   theme: 'light' | 'dark';
-  frameStyle?: 'iphone16' | 'android' | 'borderless' | 'none';
   showStatusBar: boolean;
   showHomeIndicator: boolean;
   showDynamicIsland: boolean;
-  zoomScale: number; // 0.8, 1, 1.2
+  zoomScale: number; // 0.5 - 1.3
   canvasBackdrop?: CanvasBackdrop;
   showGlassGlare?: boolean;
 }
@@ -60,155 +54,45 @@ export interface ChatMessage {
   liked?: boolean;
 }
 
-export interface CommentItem {
+export interface SimpleComment {
   id: string;
   author: string;
   avatar: string;
   text: string;
   timestamp: string;
   likes: number;
-  isVerified?: boolean;
-  replies?: CommentItem[];
 }
 
-export interface TwitterState {
-  mode: TwitterMode;
-  displayName: string;
-  handle: string;
-  avatarUrl: string;
-  verifiedBadge: VerifiedBadge;
-  tweetText: string;
-  mediaUrl: string;
-  timestamp: string;
-  date: string;
-  client: string; // e.g., 'Twitter for iPhone'
-  retweets: number;
-  quotes: number;
-  likes: number;
-  bookmarks: number;
-  views: number;
-  repliesCount: number;
-  hasMedia: boolean;
-  replies: Array<{
-    id: string;
-    displayName: string;
-    handle: string;
-    avatarUrl: string;
-    verifiedBadge: VerifiedBadge;
-    text: string;
-    timestamp: string;
-    likes: number;
-  }>;
-  chatMessages: ChatMessage[];
-}
-
-export interface InstagramState {
-  mode: InstagramMode;
-  username: string;
-  fullName: string;
-  avatarUrl: string;
-  isVerified: boolean;
-  hasStoryRing: boolean;
-  location: string;
-  postMediaUrl: string;
-  caption: string;
-  likesCount: number;
-  likedByUsername: string;
-  timestamp: string;
-  comments: CommentItem[];
-  // Live mode extras
-  liveViewers: string;
-  liveComments: Array<{
-    id: string;
-    username: string;
-    avatarUrl: string;
-    message: string;
-    badge?: string;
-  }>;
-  liveHeartsEnabled: boolean;
-  chatMessages: ChatMessage[];
-}
-
-export interface TikTokState {
-  mode: TikTokMode;
-  username: string;
-  handle: string;
-  avatarUrl: string;
-  isVerified: boolean;
-  caption: string;
-  soundTitle: string;
-  likes: number;
-  commentsCount: number;
-  shares: number;
-  bookmarks: number;
-  backgroundMediaUrl: string;
-  // Live mode extras
-  liveHostName: string;
-  liveViewers: string;
-  liveCoins: number;
-  liveGift: 'rose' | 'dragon' | 'galaxy' | 'heart' | 'none';
-  topGifters: Array<{
-    id: string;
-    avatarUrl: string;
-    rank: number;
-  }>;
-  liveChatMessages: Array<{
-    id: string;
-    user: string;
-    message: string;
-    level: number;
-  }>;
-}
-
-export interface FacebookState {
-  mode: FacebookMode;
-  userName: string;
-  userAvatar: string;
-  timestamp: string;
-  privacy: 'public' | 'friends' | 'onlyme';
-  postText: string;
-  mediaUrl: string;
-  hasMedia: boolean;
-  reactions: {
-    like: number;
-    love: number;
-    care: number;
-    haha: number;
-    wow: number;
-    sad: number;
-    angry: number;
-  };
-  commentsCount: number;
-  sharesCount: number;
-  comments: CommentItem[];
-  messengerMessages: ChatMessage[];
-}
-
-export interface YouTubeState {
-  mode: YouTubeMode;
+export interface StoreReview {
+  id: string;
+  author: string;
+  rating: number;
   title: string;
-  channelName: string;
-  channelAvatar: string;
-  isVerified: boolean;
-  subscribersCount: string;
-  viewsCount: string;
-  uploadDate: string;
-  likesCount: string;
-  dislikesCount: string;
-  isSubscribed: boolean;
-  thumbnailUrl: string;
+  text: string;
+  date: string;
+  helpfulCount: number;
+}
+
+export interface FanzaState {
+  mode: FanzaMode;
+  productCode: string;
+  title: string;
+  performerName: string;
+  performerAvatar: string;
+  makerName: string;
+  releaseDate: string;
   duration: string;
+  qualityBadge: string;
+  coverUrl: string;
+  rating: number;
+  reviewCount: number;
+  favoritesCount: number;
+  priceYen: number;
+  originalPriceYen: number;
+  discountPercent: number;
   progressPercent: number;
-  commentsCount: number;
-  liveChatMessages: Array<{
-    id: string;
-    author: string;
-    avatar: string;
-    message: string;
-    isSuperChat?: boolean;
-    superChatAmount?: string;
-    isMod?: boolean;
-  }>;
+  tags: string[];
+  reviews: StoreReview[];
 }
 
 export interface OnlyFansState {
@@ -228,53 +112,6 @@ export interface OnlyFansState {
   chatMessages: ChatMessage[];
 }
 
-export interface IMessageState {
-  mode: IMessageMode;
-  contactName: string;
-  contactAvatar: string;
-  groupMembersCount?: number;
-  messageType: 'imessage' | 'sms';
-  chatBubbles: ChatMessage[];
-  showTypingIndicator: boolean;
-  receiptText: string; // e.g. "Delivered" or "Read 10:42 AM"
-  carrierName: string;
-}
-
-export interface FaceTimeState {
-  mode: FaceTimeMode;
-  contactName: string;
-  contactAvatar: string;
-  duration: string;
-  callStatus: string; // e.g., '08:45' or 'FaceTime Video'
-  isMuted: boolean;
-  isCameraFlipped: boolean;
-  isEffectsOn: boolean;
-  backgroundMediaUrl: string;
-  selfieMediaUrl: string;
-}
-
-export interface SnapchatState {
-  mode: SnapchatMode;
-  username: string;
-  displayName: string;
-  avatarUrl: string;
-  mediaUrl: string;
-  bannerText: string;
-  bannerStyle: 'classic' | 'large';
-  timeElapsed: string;
-  timerDuration: string;
-  chatStreak: number;
-  isFriend: boolean;
-  chatMessages: Array<{
-    id: string;
-    sender: 'me' | 'them';
-    type: 'text' | 'snap';
-    text?: string;
-    snapOpened?: boolean;
-    timestamp: string;
-  }>;
-}
-
 export interface XVideosState {
   mode: XVideosMode;
   videoTitle: string;
@@ -292,27 +129,131 @@ export interface XVideosState {
   uploadDate: string;
   tags: string[];
   commentsCount: string;
-  comments: Array<{
-    id: string;
-    author: string;
-    avatar: string;
-    text: string;
-    timestamp: string;
-    likes: number;
-  }>;
+  comments: SimpleComment[];
+}
+
+export interface FanboxState {
+  mode: FanboxMode;
+  creatorName: string;
+  handle: string;
+  avatarUrl: string;
+  planName: string;
+  planPriceYen: number;
+  postTitle: string;
+  postText: string;
+  mediaUrl: string;
+  timestamp: string;
+  likes: number;
+  commentsCount: number;
+  comments: SimpleComment[];
+}
+
+export interface FanslyState {
+  mode: FanslyMode;
+  creatorName: string;
+  username: string;
+  avatarUrl: string;
+  isVerified: boolean;
+  tierName: string;
+  unlockPrice: number;
+  postText: string;
+  mediaUrl: string;
+  timestamp: string;
+  tipAmount: number;
+  likes: number;
+  commentsCount: number;
+  comments: SimpleComment[];
+  chatMessages: ChatMessage[];
+}
+
+export interface DlsiteState {
+  mode: DlsiteMode;
+  workCode: string;
+  workFormat: string;
+  title: string;
+  circleName: string;
+  circleAvatar: string;
+  coverUrl: string;
+  releaseDate: string;
+  durationOrSize: string;
+  rating: number;
+  reviewCount: number;
+  salesCount: number;
+  priceYen: number;
+  originalPriceYen: number;
+  discountPercent: number;
+  progressPercent: number;
+  tags: string[];
+  reviews: StoreReview[];
+}
+
+export interface FantiaState {
+  mode: FantiaMode;
+  fanclubName: string;
+  creatorName: string;
+  avatarUrl: string;
+  planName: string;
+  planPriceYen: number;
+  fansCount: number;
+  postTitle: string;
+  postText: string;
+  mediaUrl: string;
+  timestamp: string;
+  likes: number;
+  commentsCount: number;
+  comments: SimpleComment[];
+}
+
+export interface PornhubState {
+  mode: PornhubMode;
+  videoTitle: string;
+  channelName: string;
+  channelAvatar: string;
+  isVerified: boolean;
+  subscribersCount: string;
+  viewsCount: string;
+  uploadDate: string;
+  duration: string;
+  progressPercent: number;
+  ratingPercent: number;
+  likesCount: string;
+  dislikesCount: string;
+  thumbnailUrl: string;
+  tags: string[];
+  commentsCount: string;
+  comments: SimpleComment[];
+}
+
+export interface BlackedState {
+  mode: BlackedMode;
+  sceneTitle: string;
+  castNames: string;
+  directorName: string;
+  castAvatar: string;
+  releaseDate: string;
+  duration: string;
+  progressPercent: number;
+  qualityBadge: string;
+  rating: number;
+  likesCount: string;
+  viewsCount: string;
+  synopsis: string;
+  thumbnailUrl: string;
+  tags: string[];
+  commentsCount: string;
+  comments: SimpleComment[];
 }
 
 export interface AppState {
   activePlatform: SocialPlatform;
   deviceSettings: DeviceSettings;
-  twitter: TwitterState;
-  instagram: InstagramState;
-  tiktok: TikTokState;
-  facebook: FacebookState;
-  youtube: YouTubeState;
+  fanza: FanzaState;
   onlyfans: OnlyFansState;
-  imessage: IMessageState;
-  facetime: FaceTimeState;
-  snapchat: SnapchatState;
   xvideos: XVideosState;
+  fanbox: FanboxState;
+  fansly: FanslyState;
+  dlsite: DlsiteState;
+  fantia: FantiaState;
+  pornhub: PornhubState;
+  blacked: BlackedState;
 }

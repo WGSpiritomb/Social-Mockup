@@ -1,6 +1,6 @@
 import React from 'react';
 import { DeviceSettings } from '../../types';
-import { Wifi } from 'lucide-react';
+import { Wifi, Zap } from 'lucide-react';
 
 interface StatusBarProps {
   settings: DeviceSettings;
@@ -15,48 +15,11 @@ export const StatusBar: React.FC<StatusBarProps> = ({ settings, textColor }) => 
   const fillClass = isDarkText ? 'bg-neutral-900' : 'bg-white';
   const borderClass = isDarkText ? 'border-neutral-900/60' : 'border-white/60';
 
-  if (settings.osType === 'android') {
-    return (
-      <div className={`w-full h-8 px-4 flex items-center justify-between text-xs font-medium z-30 select-none ${colorClass}`}>
-        <div className="flex items-center space-x-1.5">
-          <span>{settings.time}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          {settings.wifi && <Wifi className="w-3.5 h-3.5" />}
-          <span className="text-[10px] tracking-tight">{settings.networkType}</span>
-          {/* Signal bars */}
-          <div className="flex items-end space-x-0.5 h-3">
-            {[1, 2, 3, 4].map((bar) => (
-              <span
-                key={bar}
-                className={`w-0.5 rounded-full ${
-                  bar <= settings.signalStrength ? fillClass : 'opacity-25 ' + fillClass
-                }`}
-                style={{ height: `${bar * 25}%` }}
-              />
-            ))}
-          </div>
-          {/* Battery */}
-          <div className="flex items-center space-x-1">
-            <span className="text-[10px]">{settings.batteryLevel}%</span>
-            <div className={`w-3.5 h-2.5 rounded-xs border ${borderClass} p-0.5 flex items-center`}>
-              <div
-                className={`h-full rounded-2xs ${fillClass}`}
-                style={{ width: `${Math.min(100, Math.max(10, settings.batteryLevel))}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // iOS Status Bar with Dynamic Island spacing
   return (
     <div className={`w-full h-11 px-7 flex items-center justify-between text-sm font-semibold z-30 select-none ${colorClass}`}>
       {/* Left: Time */}
       <div className="flex items-center">
-        <span className="text-[14px] font-semibold tracking-tight">{settings.time}</span>
+        <span className="text-[14px] font-semibold tracking-tight tabular-nums">{settings.time}</span>
       </div>
 
       {/* Center: Dynamic Island placeholder if enabled */}
@@ -84,20 +47,31 @@ export const StatusBar: React.FC<StatusBarProps> = ({ settings, textColor }) => 
           ))}
         </div>
 
-        {/* Wifi */}
+        {/* Wifi or Cellular Network */}
         {settings.wifi ? (
           <Wifi className="w-4 h-4 stroke-[2.2]" />
         ) : (
-          <span className="text-[11px] font-bold">{settings.networkType}</span>
+          <span className="text-[11px] font-bold tabular-nums">
+            {settings.networkType === 'WiFi' ? '5G' : settings.networkType}
+          </span>
         )}
 
-        {/* Battery with percentage & outline */}
-        <div className="flex items-center space-x-1">
+        {/* Battery with charging indicator */}
+        <div className="flex items-center space-x-0.5">
           <div className={`relative w-[22px] h-[11px] rounded-[3.5px] border-[1.2px] ${borderClass} p-[1.5px] flex items-center`}>
             <div
-              className={`h-full rounded-[1.5px] ${fillClass} transition-all duration-300`}
+              className={`h-full rounded-[1.5px] transition-all duration-300 ${
+                settings.isCharging
+                  ? 'bg-emerald-500'
+                  : settings.batteryLevel <= 20
+                  ? 'bg-rose-500'
+                  : fillClass
+              }`}
               style={{ width: `${Math.min(100, Math.max(12, settings.batteryLevel))}%` }}
             />
+            {settings.isCharging && (
+              <Zap className="w-2.5 h-2.5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current text-white drop-shadow-xs" />
+            )}
             {/* Battery cap */}
             <div className={`absolute -right-[2.5px] top-[2.5px] w-[1.5px] h-[4px] rounded-r-xs ${fillClass} opacity-60`} />
           </div>

@@ -6,11 +6,9 @@ const TRANSPARENT_1PX_PNG =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAZ';
 
 /**
- * Robust, cross-browser screenshot export engine that never crashes on CORS,
- * font embeds, or modern Tailwind v4 CSS properties.
+ * Temporarily neutralize any CSS zoom scale on ancestor elements during capture.
  */
-export async function captureScreenshotPng(element: HTMLElement): Promise<string> {
-  // 1. Temporarily neutralize any CSS zoom scale on parents during capture
+async function withUnscaledParent<T>(element: HTMLElement, fn: () => Promise<T>): Promise<T> {
   let transformParent: HTMLElement | null = null;
   let savedTransform = '';
   let curr: HTMLElement | null = element.parentElement;
@@ -24,15 +22,36 @@ export async function captureScreenshotPng(element: HTMLElement): Promise<string
     curr = curr.parentElement;
   }
 
+  try {
+    return await fn();
+  } finally {
+    if (transformParent) {
+      transformParent.style.transform = savedTransform;
+    }
+  }
+}
+
+function shouldIncludeNode(node: Node): boolean {
+  if (node instanceof HTMLElement && node.dataset?.noExport) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Robust, cross-browser screenshot export engine that never crashes on CORS,
+ * font embeds, or modern Tailwind v4 CSS properties.
+ */
+export async function captureScreenshotPng(element: HTMLElement): Promise<string> {
   const elementWidth = element.offsetWidth || 385;
   const elementHeight = element.offsetHeight || 780;
 
-  try {
+  return withUnscaledParent(element, async () => {
     // Tier 1: modern-screenshot (Handles Tailwind v4, ignores font CORS, uses safe fallback placeholders)
     try {
       const dataUrl = await domToPng(element, {
         scale: 2,
-        font: false, // Prevents CORS errors on external Google fonts
+        font: false,
         fetch: {
           bypassingCache: false,
           requestInit: {
@@ -41,12 +60,7 @@ export async function captureScreenshotPng(element: HTMLElement): Promise<string
           },
           placeholderImage: TRANSPARENT_1PX_PNG,
         },
-        filter: (node: Node) => {
-          if (node instanceof HTMLElement && node.dataset?.noExport) {
-            return false;
-          }
-          return true;
-        },
+        filter: shouldIncludeNode,
       });
 
       if (dataUrl && dataUrl.length > 200) {
@@ -68,12 +82,7 @@ export async function captureScreenshotPng(element: HTMLElement): Promise<string
         onImageErrorHandler: () => {
           // Intercept image load errors so it doesn't reject with {"isTrusted": true}
         },
-        filter: (node) => {
-          if (node instanceof HTMLElement && node.dataset.noExport) {
-            return false;
-          }
-          return true;
-        },
+        filter: (node) => shouldIncludeNode(node),
       });
 
       if (dataUrl && dataUrl.length > 200) {
@@ -117,33 +126,30 @@ export async function captureScreenshotPng(element: HTMLElement): Promise<string
     }
 
     throw new Error('Screenshot engine returned empty data.');
-  } finally {
-    // Always restore the transform on the zoom container
-    if (transformParent) {
-      transformParent.style.transform = savedTransform;
-    }
-  }
+  });
 }
 
 /**
  * Robust PNG Blob generator for clipboard copy
  */
 export async function captureScreenshotBlob(element: HTMLElement): Promise<Blob | null> {
-  // 1. Try domToBlob from modern-screenshot
+  // 1. Try domToBlob from modern-screenshot with unscaled parent
   try {
-    const blob = await domToBlob(element, {
-      scale: 2,
-      font: false,
-      fetch: {
-        placeholderImage: TRANSPARENT_1PX_PNG,
-      },
-      filter: (node: Node) => {
-        if (node instanceof HTMLElement && node.dataset?.noExport) {
-          return false;
-        }
-        return true;
-      },
-    });
+    const blob = await withUnscaledParent(element, () =>
+      domToBlob(element, {
+        scale: 2,
+        font: false,
+        fetch: {
+          bypassingCache: false,
+          requestInit: {
+            mode: 'cors',
+            cache: 'force-cache',
+          },
+          placeholderImage: TRANSPARENT_1PX_PNG,
+        },
+        filter: shouldIncludeNode,
+      })
+    );
 
     if (blob) return blob;
   } catch (blobErr) {

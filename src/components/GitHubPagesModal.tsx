@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Github, ExternalLink } from 'lucide-react';
+import { X, Copy, Check, Github } from 'lucide-react';
 
 interface GitHubPagesModalProps {
   isOpen: boolean;
@@ -70,7 +70,7 @@ jobs:
 `;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
       <div className="relative w-full max-w-2xl max-h-[90vh] bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-neutral-200">
         {/* Header */}
         <div className="px-6 py-4 border-b border-neutral-800 flex items-center justify-between">
@@ -84,8 +84,9 @@ jobs:
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition-colors"
+            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -93,9 +94,8 @@ jobs:
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar text-xs">
-          {/* Quick Steps */}
           <div>
-            <h4 className="font-bold text-sm text-white mb-2">1. One-Click Setup Steps</h4>
+            <h4 className="font-bold text-sm text-white mb-2">1. Setup Steps</h4>
             <ol className="list-decimal list-inside space-y-1.5 text-neutral-300">
               <li>
                 Push this project into your GitHub repository (e.g. <code className="px-1.5 py-0.5 rounded bg-neutral-800 text-blue-400">username/social-media-mockups</code>).
@@ -110,20 +110,20 @@ jobs:
                 Place the workflow file below into <code className="px-1.5 py-0.5 rounded bg-neutral-800 text-amber-300">.github/workflows/deploy.yml</code>.
               </li>
               <li>
-                Every git push to the <code className="px-1.5 py-0.5 rounded bg-neutral-800 text-green-400">main</code> branch automatically builds and deploys your site to GitHub Pages!
+                Every push to the <code className="px-1.5 py-0.5 rounded bg-neutral-800 text-green-400">main</code> branch builds and deploys your static app automatically.
               </li>
             </ol>
           </div>
 
-          {/* Workflow Code */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <span className="font-semibold text-neutral-300">
                 .github/workflows/deploy.yml
               </span>
               <button
+                type="button"
                 onClick={() => handleCopy(deployYmlContent, 'yml')}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 transition-colors"
+                className="flex items-center space-x-1 px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 transition-colors cursor-pointer"
               >
                 {copiedSection === 'yml' ? (
                   <>
@@ -143,21 +143,21 @@ jobs:
             </pre>
           </div>
 
-          {/* Directory Architecture */}
           <div>
-            <h4 className="font-bold text-sm text-white mb-2">2. Clean Modular Architecture</h4>
+            <h4 className="font-bold text-sm text-white mb-2">2. Modular Architecture</h4>
             <div className="p-3 rounded-lg bg-neutral-950 border border-neutral-800 font-mono text-[11px] text-neutral-400 leading-relaxed">
               <p>├── .github/workflows/deploy.yml   <span className="text-neutral-500"># Automated GH Actions workflow</span></p>
               <p>├── src/</p>
-              <p>│   ├── types.ts                   <span className="text-neutral-500"># Strict TypeScript interfaces</span></p>
-              <p>│   ├── data/initialData.ts        <span className="text-neutral-500"># Platform presets & sample content</span></p>
+              <p>│   ├── types.ts                   <span className="text-neutral-500"># TypeScript interfaces</span></p>
+              <p>│   ├── data/                      <span className="text-neutral-500"># 9 platform presets & metadata</span></p>
               <p>│   ├── components/</p>
-              <p>│   │   ├── DeviceFrame.tsx        <span className="text-neutral-500"># iPhone 16 / Android / Borderless chassis</span></p>
-              <p>│   │   ├── EditorPanel.tsx        <span className="text-neutral-500"># Contextual multi-platform controls</span></p>
-              <p>│   │   ├── platforms/             <span className="text-neutral-500"># 8 Pixel-perfect platform mockups</span></p>
-              <p>│   │   └── common/                <span className="text-neutral-500"># Status bars, badges, FileReader uploader</span></p>
-              <p>│   └── App.tsx                    <span className="text-neutral-500"># Split-screen responsive layout</span></p>
-              <p>└── vite.config.ts                 <span className="text-neutral-500"># Fast static SPA compiler</span></p>
+              <p>│   │   ├── DeviceFrame.tsx        <span className="text-neutral-500"># Portrait & landscape frames</span></p>
+              <p>│   │   ├── EditorPanel.tsx        <span className="text-neutral-500"># Contextual multi-platform editor</span></p>
+              <p>│   │   ├── editor/                <span className="text-neutral-500"># Modular content, device & review editors</span></p>
+              <p>│   │   ├── platforms/             <span className="text-neutral-500"># 9 platform mockup renderers</span></p>
+              <p>│   │   └── common/                <span className="text-neutral-500"># Status bar, badges, image uploader</span></p>
+              <p>│   └── App.tsx                    <span className="text-neutral-500"># Split-screen studio layout</span></p>
+              <p>└── vite.config.ts                 <span className="text-neutral-500"># Static SPA bundler</span></p>
             </div>
           </div>
         </div>
@@ -165,8 +165,9 @@ jobs:
         {/* Footer */}
         <div className="px-6 py-3 border-t border-neutral-800 bg-neutral-950 flex justify-end">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors"
+            className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
           >
             Got it
           </button>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { OnlyFansState, DeviceSettings } from '../../types';
+import { SafeImage } from '../common/SafeImage';
 import {
   Lock,
   Heart,
   MessageCircle,
   DollarSign,
-  Share2,
   Bookmark,
   MoreHorizontal,
   ArrowLeft,
@@ -31,20 +31,21 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
   // DM Chat Mode
   if (state.mode === 'chat') {
     return (
-      <div className={`w-full ${isDesktop ? 'h-auto min-h-[500px]' : 'h-full'} flex flex-col ${bgClass} select-none`}>
+      <div className={`w-full ${isDesktop ? 'h-auto min-h-[520px]' : 'h-full'} flex flex-col ${bgClass} select-none`}>
         {/* OnlyFans DM Header */}
         <div className={`px-4 py-2.5 flex items-center justify-between border-b ${borderClass}`}>
           <div className="flex items-center space-x-3">
             <ArrowLeft className="w-5 h-5 text-[#00aff0] cursor-pointer" />
-            <img
+            <SafeImage
               src={state.avatarUrl}
               alt={state.creatorName}
+              fallbackText={state.creatorName}
               className="w-8 h-8 rounded-full object-cover border border-[#00aff0]"
             />
             <div>
               <div className="flex items-center space-x-1">
                 <span className="font-bold text-sm">{state.creatorName}</span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#00aff0] fill-[#00aff0]" />
+                <CheckCircle2 className="w-3.5 h-3.5 fill-[#00aff0] text-white" />
               </div>
               <span className={`text-xs ${subtextClass}`}>@{state.username}</span>
             </div>
@@ -80,7 +81,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
 
         {/* Input bar */}
         <div className={`p-2.5 border-t ${borderClass} flex items-center space-x-2`}>
-          <button className="w-8 h-8 rounded-full bg-neutral-800 text-[#00aff0] flex items-center justify-center shrink-0">
+          <button className={`w-8 h-8 rounded-full text-[#00aff0] flex items-center justify-center shrink-0 ${isDark ? 'bg-neutral-800' : 'bg-neutral-100'}`}>
             <DollarSign className="w-4 h-4" />
           </button>
           <div className={`flex-1 flex items-center rounded-full px-3.5 py-2 ${isDark ? 'bg-[#242b32]' : 'bg-neutral-100'}`}>
@@ -124,9 +125,10 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
         {/* Creator Info Header */}
         <div className="p-3.5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <img
+            <SafeImage
               src={state.avatarUrl}
               alt={state.creatorName}
+              fallbackText={state.creatorName}
               className="w-10 h-10 rounded-full object-cover border border-[#00aff0]"
             />
             <div>
@@ -134,7 +136,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
                 <span className="font-bold text-sm leading-tight hover:underline cursor-pointer">
                   {state.creatorName}
                 </span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#00aff0] fill-[#00aff0]" />
+                <CheckCircle2 className="w-3.5 h-3.5 fill-[#00aff0] text-white" />
               </div>
               <span className={`text-xs ${subtextClass}`}>@{state.username} · 3h ago</span>
             </div>
@@ -149,13 +151,12 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
 
         {/* Media / Locked Paywall Overlay */}
         <div className="relative w-full aspect-square bg-neutral-900 overflow-hidden">
-          <img
+          <SafeImage
             src={state.mediaUrl}
             alt="OnlyFans media"
             className={`w-full h-full object-cover transition-all ${
               isPaywalled ? 'blur-xl scale-110 brightness-50' : ''
             }`}
-            referrerPolicy="no-referrer"
           />
 
           {/* Paywall Overlay */}
@@ -168,7 +169,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
               <p className="text-xs text-neutral-300 max-w-xs mb-4">
                 Unlock this post to view 24 high-resolution media items
               </p>
-              <button className="px-6 py-2.5 rounded-full bg-[#00aff0] hover:bg-[#009fd9] text-white font-extrabold text-sm shadow-lg shadow-[#00aff0]/30 transition-transform active:scale-95">
+              <button className="px-6 py-2.5 rounded-full bg-[#00aff0] hover:bg-[#009fd9] text-white font-extrabold text-sm shadow-lg shadow-[#00aff0]/30 tabular-nums">
                 Unlock Post for ${state.unlockPrice.toFixed(2)}
               </button>
             </div>
@@ -176,7 +177,7 @@ export const OnlyFansMockup: React.FC<OnlyFansMockupProps> = ({ state, deviceSet
         </div>
 
         {/* Actions Bar */}
-        <div className={`px-3.5 py-3 flex items-center justify-between border-t ${borderClass}`}>
+        <div className={`px-3.5 py-3 flex items-center justify-between border-t ${borderClass} tabular-nums`}>
           <div className="flex items-center space-x-4">
             <button className="flex items-center space-x-1.5 text-xs font-semibold hover:text-rose-500">
               <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
